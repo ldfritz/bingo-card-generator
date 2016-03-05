@@ -1,19 +1,26 @@
 class BingoCard
+  COLUMNS = %w[B I N G O]
+
   def initialize
-    @card = BingoCard.generate
+    @card = generate_card
+  end
+
+  def to_a
+    COLUMNS.reduce([]) do |result, letter|
+      result << [letter] + @card[letter]
+    end.transpose
   end
 
   def to_csv
-    @card.reduce("") do |result, row|
-      result << row.join(",") << "\n"
-    end
+    self.to_a.map {|i| i.join(",") }.join("\n")
   end
 
-  def self.generate
-    %w[B I N G O].each_with_index.reduce([]) do |result, (letter, indx)|
-      row = [letter] + (((indx * 15) + 1)..((indx + 1) * 15)).to_a.shuffle[0,5]
-      row[3] = "FREE" if letter == "N"
-      result << row
-    end.transpose
-  end
+  private
+    def generate_card
+      BingoCard::COLUMNS.each_with_index.reduce({}) do |result, (letter, indx)|
+        result[letter] = (((indx * 15) + 1)..((indx + 1) * 15)).to_a.shuffle[0,5]
+        result[letter][2] = "FREE" if letter == "N"
+        result
+      end
+    end
 end
