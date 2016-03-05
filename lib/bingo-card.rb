@@ -15,6 +15,11 @@ class BingoCard
     self.to_a.map {|i| i.join(",") }.join("\n")
   end
 
+  def to_pdf(filename)
+    require_relative "bingo-card-pdf"
+    BingoCardPDF.render(self, filename)
+  end
+
   private
     def generate_card
       BingoCard::COLUMNS.each_with_index.reduce({}) do |result, (letter, indx)|
